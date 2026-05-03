@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 export async function POST(request: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   const body = await request.text()
   const sig = request.headers.get('stripe-signature')!
 
@@ -19,8 +18,6 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
     const { linkId, sellerUsername } = session.metadata || {}
     const customerEmail = session.customer_details?.email
-
-    // Log the sale — in a real app you'd email the download link here
     console.log(`Sale: ${linkId} by ${sellerUsername} to ${customerEmail}`)
   }
 
