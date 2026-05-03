@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import DashboardNav from '@/components/DashboardNav'
 
-export default async function DashboardPage() {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -12,6 +13,10 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single()
 
-  if (!profile) redirect('/dashboard/onboarding')
-  redirect('/dashboard/links')
+  return (
+    <div style={{ minHeight: '100vh', background: '#fafafa' }}>
+      <DashboardNav username={profile?.username || ''} />
+      <main>{children}</main>
+    </div>
+  )
 }
