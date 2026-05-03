@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import LinkButton from '@/components/LinkButton'
+import BuyButton from '@/components/BuyButton'
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
@@ -47,9 +48,19 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {(links || []).map(link => (
-            <LinkButton key={link.id} href={link.url} title={link.title} />
-          ))}
+          {(links || []).map(link =>
+            link.type === 'product' ? (
+              <BuyButton
+                key={link.id}
+                linkId={link.id}
+                title={link.title}
+                priceCents={link.price_cents}
+                sellerUsername={profile.username}
+              />
+            ) : (
+              <LinkButton key={link.id} href={link.url} title={link.title} />
+            )
+          )}
         </div>
 
         <div style={{ textAlign: 'center', marginTop: 40 }}>
